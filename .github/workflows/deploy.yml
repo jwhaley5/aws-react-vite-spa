@@ -9,7 +9,7 @@ permissions:
 jobs:
     deploy:
         runs-on: ubuntu-latest
-
+        if: github.actor == 'jwhaley5'
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
