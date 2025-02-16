@@ -18,15 +18,19 @@ jobs:
               uses: aws-actions/configure-aws-credentials@v4
               with:
                   role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-                  aws-region: us-east-1 # Change to your AWS region
+                  aws-region: us-east-1
             - name: Change directory to frontend project
               run: |
                   cd app
+                  ls -la  # Debug: list directory contents
                   npm install
                   npm run build
+              working-directory: ./app
 
             - name: Upload to S3
-              run: aws s3 sync app/dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+              run: aws s3 sync dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+              working-directory: ./app
+
             - name: Invalidate CloudFront Cache
               run: |
-                  aws cloudfront create-invalidation --distribution-id ${{secrets.CLOUDRONT_DISTRIBUTION_ID}} --paths "/*"
+                  aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
